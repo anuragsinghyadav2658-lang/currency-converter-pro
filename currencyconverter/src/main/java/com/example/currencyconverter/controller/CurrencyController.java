@@ -40,3 +40,4 @@ public class CurrencyController {
         return conversionRepository.findAll();
     }
 }
+
