@@ -23,7 +23,8 @@ public class AiService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String extractCurrencyInfo(String query) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        String cleanKey = apiKey.replaceAll("[\\[\\]\"\'\\s]", "").trim(); // Sab faltu characters saaf
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + cleanKey;
 
         // Prompt se double quotes hata diye hain taaki koi format break na ho
         String prompt = "Extract amount, source currency code (3 letters), and target currency code (3 letters) from this text: '" + query + "'. " +
