@@ -23,14 +23,17 @@ public class AiService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String extractCurrencyInfo(String query) {
-        String cleanKey = apiKey.replaceAll("[\\[\\]\"\'\\s]", "").trim(); // Sab faltu characters saaf
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + cleanKey;
+        // String cleanKey = apiKey.replaceAll("[\\[\\]\"\'\\s]", "").trim(); // Sab
+        String cleanKey = apiKey.replaceAll("[\\[\\]\"\'\\s]", "").trim();
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
+                + cleanKey;
 
         // Prompt se double quotes hata diye hain taaki koi format break na ho
-        String prompt = "Extract amount, source currency code (3 letters), and target currency code (3 letters) from this text: '" + query + "'. " +
-                        "Return EXACTLY a raw JSON object with keys: 'amount', 'from', 'to'. " +
-                        "Do not include markdown, do not include backticks, do not include any extra words. " +
-                        "Example response format: {\"amount\": 100, \"from\": \"USD\", \"to\": \"INR\"}";
+        String prompt = "Extract amount, source currency code (3 letters), and target currency code (3 letters) from this text: '"
+                + query + "'. " +
+                "Return EXACTLY a raw JSON object with keys: 'amount', 'from', 'to'. " +
+                "Do not include markdown, do not include backticks, do not include any extra words. " +
+                "Example response format: {\"amount\": 100, \"from\": \"USD\", \"to\": \"INR\"}";
 
         try {
             // ObjectMapper se safe JSON structure banana (Escaping ki galti ab nahi hogi)
@@ -52,15 +55,17 @@ public class AiService {
 
             // Response se text nikalna
             JsonNode responseJson = objectMapper.readTree(response);
-            String aiText = responseJson.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText().trim();
+            String aiText = responseJson.path("candidates").get(0).path("content").path("parts").get(0).path("text")
+                    .asText().trim();
 
-            // Agar Gemini ne galti se ```json ... ``` ke andar response wrap kiya ho, toh use saaf karo
+            // Agar Gemini ne galti se ```json ... ``` ke andar response wrap kiya ho, toh
+            // use saaf karo
             if (aiText.startsWith("```")) {
                 aiText = aiText.replaceAll("^```json\\s*", "").replaceAll("```$", "").trim();
             }
 
             return aiText;
-            
+
         } catch (Exception e) {
             System.out.println("AI Service Error: " + e.getMessage());
             e.printStackTrace();
