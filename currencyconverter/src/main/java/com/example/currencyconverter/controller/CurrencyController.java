@@ -51,4 +51,10 @@ public class CurrencyController {
     public List<ConversionRecord> getHistory() {
         return conversionRepository.findAll();
     }
+
+    @GetMapping("/")
+    public String wakeUp() {
+        return "Server is awake and running!";
+    }
+
 }
